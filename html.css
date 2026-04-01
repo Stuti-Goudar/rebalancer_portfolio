@@ -133,3 +133,16 @@ button:hover {
         transform: translateY(0);
     }
 }
+.light {
+    background: white;
+    color: black;
+}
+.light .card {
+    background: white;
+    color: black;
+}
+
+.light input {
+    background: #e2e8f0;
+    color: black;
+}

@@ -71,6 +71,8 @@ app.get("/", (req, res) => {
         let data = await res.json();
         document.getElementById("result").innerText = JSON.stringify(data, null, 2);
       }
+        <body class="light">
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     </script>
   </body>
   </html>
@@ -118,3 +120,45 @@ app.post("/rebalance", async (req, res) => {
 app.listen(5000, () => {
   console.log("Server running at http://localhost:5000");
 });
+function login() {
+    let u = document.getElementById("user").value;
+    let p = document.getElementById("pass").value;
+
+    if (u === "admin" && p === "1234") {
+        document.getElementById("loginPage").style.display = "none";
+        document.getElementById("app").style.display = "flex";
+    } else {
+        alert("Wrong login");
+    }
+}
+
+function showPage(page) {
+    document.querySelectorAll("[id$='Page']").forEach(p => p.style.display = "none");
+    document.getElementById(page + "Page").style.display = "block";
+}
+
+function toggleTheme() {
+    document.body.classList.toggle("light");
+}
+let chart;
+let labels = assets.map(a => a.name);
+let values = assets.map(a => a.value);
+
+const ctx = document.getElementById("portfolioChart");
+
+if (chart) chart.destroy();
+
+chart = new Chart(ctx, {
+    type: "pie",
+    data: {
+        labels: labels,
+        datasets: [{
+            data: values
+        }]
+    }
+});
+
+document.getElementById("totalVal").innerText = total.toFixed(2);
+function toggleTheme() {
+    document.body.classList.toggle("light");
+}
