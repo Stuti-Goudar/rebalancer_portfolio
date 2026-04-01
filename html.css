@@ -1,0 +1,135 @@
+/* 🌌 Background */
+body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    min-height: 100vh;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 🧊 Glass Container */
+.container {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(15px);
+    border-radius: 20px;
+    padding: 30px;
+    width: 750px;
+    color: white;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    animation: fadeIn 1s ease-in-out;
+}
+
+/* 📝 Title */
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-weight: 600;
+    letter-spacing: 1px;
+}
+
+/* 📦 Asset Row */
+.asset-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    gap: 10px;
+}
+
+/* ✏️ Inputs */
+input {
+    flex: 1;
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+    outline: none;
+    font-size: 14px;
+    transition: 0.3s;
+}
+
+input:focus {
+    transform: scale(1.05);
+    box-shadow: 0 0 10px #00c6ff;
+}
+
+/* 🔘 Buttons */
+button {
+    margin-top: 10px;
+    padding: 10px 15px;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: 0.3s;
+}
+
+/* ➕ Add Button */
+button:first-of-type {
+    background: linear-gradient(45deg, #00c6ff, #0072ff);
+    color: white;
+}
+
+/* ⚖️ Rebalance Button */
+button:last-of-type {
+    background: linear-gradient(45deg, #ff7e5f, #feb47b);
+    color: white;
+}
+
+/* Hover Effects */
+button:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+/* 📊 Result Section */
+.result {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 15px;
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(10px);
+}
+
+/* Result Text */
+.result p {
+    font-size: 16px;
+    margin: 8px 0;
+    padding: 8px;
+    border-radius: 10px;
+    transition: 0.3s;
+}
+
+/* 🎯 Actions */
+.buy {
+    background: rgba(0, 255, 100, 0.2);
+    color: #00ff9d;
+}
+
+.sell {
+    background: rgba(255, 0, 80, 0.2);
+    color: #ff4d6d;
+}
+
+.hold {
+    background: rgba(200, 200, 200, 0.2);
+    color: #ccc;
+}
+
+/* ✨ Hover on result */
+.result p:hover {
+    transform: scale(1.03);
+}
+
+/* 🎬 Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
