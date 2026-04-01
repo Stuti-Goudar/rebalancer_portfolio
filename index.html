@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Portfolio Rebalancer Pro</title>
+
+<!-- Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<!-- Font -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+
+/* 🌌 Base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    height: 100vh;
+    display: flex;
+    background: #0f172a;
+    color: white;
+}
+
+/* 📊 Sidebar */
+.sidebar {
+    width: 250px;
+    background: #020617;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar h2 {
+    margin-bottom: 30px;
+    text-align: center;
+    color: #38bdf8;
+}
+
+.sidebar a {
+    text-decoration: none;
+    color: #cbd5f5;
+    padding: 12px;
+    margin: 5px 0;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: 0.3s;
+}
+
+.sidebar a:hover {
+    background: #1e293b;
+    color: white;
+}
+
+/* 🖥️ Main Content */
+.main {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+/* 🧾 Header */
+.header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.header h1 {
+    font-size: 22px;
+}
+
+.header i {
+    font-size: 20px;
+    cursor: pointer;
+}
+
+/* 📦 Card */
+.card {
+    background: #1e293b;
+    padding: 20px;
+    border-radius: 15px;
+    margin-bottom: 20px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+}
+
+/* 📈 Asset Row */
+.asset-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+/* Inputs */
+input {
+    flex: 1;
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+    background: #0f172a;
+    color: white;
+}
+
+/* 🔘 Buttons */
+.buttons {
+    margin-top: 10px;
+}
+
+button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 10px;
+    margin-right: 10px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: 0.3s;
+}
+
+.add-btn {
+    background: #38bdf8;
+}
+
+.rebalance-btn {
+    background: #22c55e;
+}
+
+button:hover {
+    transform: scale(1.05);
+}
+
+/* 📊 Result */
+.result p {
+    padding: 10px;
+    border-radius: 10px;
+    margin: 5px 0;
+}
+
+/* Colors */
+.buy { background: rgba(34,197,94,0.2); color: #22c55e; }
+.sell { background: rgba(239,68,68,0.2); color: #ef4444; }
+.hold { background: rgba(148,163,184,0.2); color: #94a3b8; }
+
+</style>
+</head>
+
+<body>
+
+<!-- Sidebar -->
+<div class="sidebar">
+    <h2><i class="fa-solid fa-chart-line"></i> FinDash</h2>
+
+    <a href="#"><i class="fa-solid fa-house"></i> Dashboard</a>
+    <a href="#"><i class="fa-solid fa-wallet"></i> Portfolio</a>
+    <a href="#"><i class="fa-solid fa-chart-pie"></i> Analytics</a>
+    <a href="#"><i class="fa-solid fa-gear"></i> Settings</a>
+</div>
+
+<!-- Main -->
+<div class="main">
+
+    <!-- Header -->
+    <div class="header">
+        <h1>📊 Portfolio Rebalancer</h1>
+        <i class="fa-solid fa-user-circle"></i>
+    </div>
+
+    <!-- Input Card -->
+    <div class="card">
+        <h3>Add Assets</h3>
+        <div id="assets"></div>
+
+        <div class="buttons">
+            <button class="add-btn" onclick="addAsset()">
+                <i class="fa-solid fa-plus"></i> Add
+            </button>
+            <button class="rebalance-btn" onclick="rebalance()">
+                <i class="fa-solid fa-scale-balanced"></i> Rebalance
+            </button>
+        </div>
+    </div>
+
+    <!-- Result Card -->
+    <div class="card result" id="result">
+        <h3>Results</h3>
+    </div>
+
+</div>
+
+<script>
+
+let assetCount = 0;
+
+function addAsset() {
+    assetCount++;
+
+    const div = document.createElement("div");
+    div.className = "asset-row";
+
+    div.innerHTML = `
+        <input type="text" placeholder="Asset">
+        <input type="number" placeholder="Value">
+        <input type="number" placeholder="Target %">
+    `;
+
+    document.getElementById("assets").appendChild(div);
+}
+
+function rebalance() {
+    let rows = document.querySelectorAll(".asset-row");
+    let total = 0;
+    let assets = [];
+
+    rows.forEach(row => {
+        let inputs = row.querySelectorAll("input");
+
+        let name = inputs[0].value;
+        let value = parseFloat(inputs[1].value);
+        let target = parseFloat(inputs[2].value);
+
+        if (!name || isNaN(value) || isNaN(target)) return;
+
+        total += value;
+        assets.push({name, value, target});
+    });
+
+    let resultHTML = "<h3>Results</h3>";
+
+    assets.forEach(a => {
+        let targetValue = a.target * total;
+        let diff = targetValue - a.value;
+
+        let cls = "hold";
+        let text = "HOLD";
+
+        if (diff > 0) {
+            cls = "buy";
+            text = `BUY ₹${diff.toFixed(2)}`;
+        } else if (diff < 0) {
+            cls = "sell";
+            text = `SELL ₹${Math.abs(diff).toFixed(2)}`;
+        }
+
+        resultHTML += `<p class="${cls}"><b>${a.name}</b>: ${text}</p>`;
+    });
+
+    document.getElementById("result").innerHTML = resultHTML;
+}
+
+// default rows
+addAsset();
+addAsset();
+
+</script>
+
+</body>
+</html>
