@@ -1,0 +1,1042 @@
+openapi: 3.1.0
+info:
+  title: Api
+  version: 0.1.0
+  description: Portfolio Rebalancer API
+servers:
+  - url: /api
+tags:
+  - name: health
+  - name: portfolios
+  - name: holdings
+  - name: targets
+  - name: analytics
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+
+  /portfolios:
+    get:
+      operationId: listPortfolios
+      tags: [portfolios]
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Portfolio"
+    post:
+      operationId: createPortfolio
+      tags: [portfolios]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreatePortfolioBody"
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Portfolio"
+
+  /portfolios/{id}:
+    get:
+      operationId: getPortfolio
+      tags: [portfolios]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Portfolio"
+    patch:
+      operationId: updatePortfolio
+      tags: [portfolios]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdatePortfolioBody"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Portfolio"
+    delete:
+      operationId: deletePortfolio
+      tags: [portfolios]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /portfolios/{portfolioId}/holdings:
+    get:
+      operationId: listHoldings
+      tags: [holdings]
+      parameters:
+        - name: portfolioId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Holding"
+    post:
+      operationId: createHolding
+      tags: [holdings]
+      parameters:
+        - name: portfolioId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateHoldingBody"
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Holding"
+
+  /portfolios/{portfolioId}/holdings/{id}:
+    patch:
+      operationId: updateHolding
+      tags: [holdings]
+      parameters:
+        - name: portfolioId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateHoldingBody"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Holding"
+    delete:
+      operationId: deleteHolding
+      tags: [holdings]
+      parameters:
+        - name: portfolioId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /portfolios/{portfolioId}/targets:
+    get:
+      operationId: listTargets
+      tags: [targets]
+      parameters:
+        - name: portfolioId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Target"
+    post:
+      operationId: createTarget
+      tags: [targets]
+      parameters:
+        - name: portfolioId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateTargetBody"
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Target"
+
+  /portfolios/{portfolioId}/targets/{id}:
+    patch:
+      operationId: updateTarget
+      tags: [targets]
+      parameters:
+        - name: portfolioId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateTargetBody"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Target"
+    delete:
+      operationId: deleteTarget
+      tags: [targets]
+      parameters:
+        - name: portfolioId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /portfolios/{portfolioId}/rebalance:
+    get:
+      operationId: getRebalancePlan
+      tags: [analytics]
+      parameters:
+        - name: portfolioId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RebalancePlan"
+
+  /portfolios/{portfolioId}/summary:
+    get:
+      operationId: getPortfolioSummary
+      tags: [analytics]
+      parameters:
+        - name: portfolioId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PortfolioSummary"
+
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required: [status]
+
+    Portfolio:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: ["string", "null"]
+        currency:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required: [id, name, currency, createdAt, updatedAt]
+
+    CreatePortfolioBody:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: ["string", "null"]
+        currency:
+          type: string
+      required: [name, currency]
+
+    UpdatePortfolioBody:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: ["string", "null"]
+        currency:
+          type: string
+
+    Holding:
+      type: object
+      properties:
+        id:
+          type: integer
+        portfolioId:
+          type: integer
+        ticker:
+          type: string
+        name:
+          type: string
+        assetClass:
+          type: string
+        shares:
+          type: number
+        currentPrice:
+          type: number
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required: [id, portfolioId, ticker, name, assetClass, shares, currentPrice, createdAt, updatedAt]
+
+    CreateHoldingBody:
+      type: object
+      properties:
+        ticker:
+          type: string
+        name:
+          type: string
+        assetClass:
+          type: string
+        shares:
+          type: number
+        currentPrice:
+          type: number
+      required: [ticker, name, assetClass, shares, currentPrice]
+
+    UpdateHoldingBody:
+      type: object
+      properties:
+        ticker:
+          type: string
+        name:
+          type: string
+        assetClass:
+          type: string
+        shares:
+          type: number
+        currentPrice:
+          type: number
+
+    Target:
+      type: object
+      properties:
+        id:
+          type: integer
+        portfolioId:
+          type: integer
+        assetClass:
+          type: string
+        targetPercent:
+          type: number
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required: [id, portfolioId, assetClass, targetPercent, createdAt, updatedAt]
+
+    CreateTargetBody:
+      type: object
+      properties:
+        assetClass:
+          type: string
+        targetPercent:
+          type: number
+      required: [assetClass, targetPercent]
+
+    UpdateTargetBody:
+      type: object
+      properties:
+        assetClass:
+          type: string
+        targetPercent:
+          type: number
+
+    RebalanceAction:
+      type: object
+      properties:
+        ticker:
+          type: string
+        name:
+          type: string
+        assetClass:
+          type: string
+        action:
+          type: string
+        currentValue:
+          type: number
+        targetValue:
+          type: number
+        difference:
+          type: number
+        sharesToTrade:
+          type: number
+        currentPercent:
+          type: number
+        targetPercent:
+          type: number
+      required: [ticker, name, assetClass, action, currentValue, targetValue, difference, sharesToTrade, currentPercent, targetPercent]
+
+    RebalancePlan:
+      type: object
+      properties:
+        totalValue:
+          type: number
+        actions:
+          type: array
+          items:
+            $ref: "#/components/schemas/RebalanceAction"
+        summary:
+          type: object
+          properties:
+            totalBuys:
+              type: number
+            totalSells:
+              type: number
+            actionsCount:
+              type: integer
+          required: [totalBuys, totalSells, actionsCount]
+      required: [totalValue, actions, summary]
+
+    AllocationBreakdown:
+      type: object
+      properties:
+        assetClass:
+          type: string
+        currentValue:
+          type: number
+        currentPercent:
+          type: number
+        targetPercent:
+          type: number
+        drift:
+          type: number
+      required: [assetClass, currentValue, currentPercent, targetPercent, drift]
+
+    PortfolioSummary:
+      type: object
+      properties:
+        portfolioId:
+          type: integer
+        totalValue:
+          type: number
+        holdingsCount:
+          type: integer
+        allocations:
+          type: array
+          items:
+            $ref: "#/components/schemas/AllocationBreakdown"
+        isBalanced:
+          type: boolean
+        maxDrift:
+          type: number
+      required: [portfolioId, totalValue, holdingsCount, allocations, isBalanced, maxDrift]
+      import { pgTable, text, serial, timestamp } from "drizzle-orm/pg-core";
+import { createInsertSchema } from "drizzle-zod";
+import { z } from "zod/v4";
+
+export const portfoliosTable = pgTable("portfolios", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  description: text("description"),
+  currency: text("currency").notNull().default("USD"),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow().$onUpdate(() => new Date()),
+});
+
+export const insertPortfolioSchema = createInsertSchema(portfoliosTable).omit({ id: true, createdAt: true, updatedAt: true });
+export type InsertPortfolio = z.infer<typeof insertPortfolioSchema>;
+export type Portfolio = typeof portfoliosTable.$inferSelect;
+import { pgTable, text, serial, timestamp, integer, real } from "drizzle-orm/pg-core";
+import { createInsertSchema } from "drizzle-zod";
+import { z } from "zod/v4";
+
+export const holdingsTable = pgTable("holdings", {
+  id: serial("id").primaryKey(),
+  portfolioId: integer("portfolio_id").notNull(),
+  ticker: text("ticker").notNull(),
+  name: text("name").notNull(),
+  assetClass: text("asset_class").notNull(),
+  shares: real("shares").notNull(),
+  currentPrice: real("current_price").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow().$onUpdate(() => new Date()),
+});
+
+export const insertHoldingSchema = createInsertSchema(holdingsTable).omit({ id: true, createdAt: true, updatedAt: true });
+export type InsertHolding = z.infer<typeof insertHoldingSchema>;
+export type Holding = typeof holdingsTable.$inferSelect;
+[2:18 pm, 01/04/2026] +91 70192 16347: export * from "./portfolios";
+export * from "./holdings";
+export * from "./targets";
+[2:18 pm, 01/04/2026] +91 70192 16347: import { Router, type IRouter } from "express";
+import { eq } from "drizzle-orm";
+import { db, portfoliosTable } from "@workspace/db";
+import {
+  CreatePortfolioBody, UpdatePortfolioBody,
+  GetPortfolioParams, UpdatePortfolioParams, DeletePortfolioParams,
+  ListPortfoliosResponse, GetPortfolioResponse, UpdatePortfolioResponse,
+} from "@workspace/api-zod";
+
+const router: IRouter = Router();
+
+router.get("/portfolios", async (req, res): Promise<void> => {
+  const portfolios = await db.select().from(portfoliosTable).orderBy(portfoliosTable.createdAt);
+  res.json(ListPortfoliosResponse.parse(portfolios));
+});
+router.post("/portfolios", async (req, res): Promise<void> => {
+  const parsed = CreatePortfolioBody.safeParse(req.body);
+  if (!parsed.success) { res.status(400).json({ error: parsed.error.message }); return; }
+  const [portfolio] = await db.insert(portfoliosTable).values(parsed.data).returning();
+  res.status(201).json(GetPortfolioResponse.parse(portfolio));
+});
+
+router.get("/portfolios/:id", async (req, res): Promise<void> => {
+  const params = GetPortfolioParams.safeParse(req.params);
+  if (!params.success) { res.status(400).json({ error: params.error.message }); return; }
+  const [portfolio] = await db.select().from(portfoliosTable).where(eq(portfoliosTable.id, params.data.id));
+  if (!portfolio) { res.status(404).json({ error: "Portfolio not found" }); return; }
+  res.json(GetPortfolioResponse.parse(portfolio));
+});
+
+router.patch("/portfolios/:id", async (req, res): Promise<void> => {
+  const params = UpdatePortfolioParams.safeParse(req.params);
+  if (!params.success) { res.status(400).json({ error: params.error.message }); return; }
+  const parsed = UpdatePortfolioBody.safeParse(req.body);
+  if (!parsed.success) { res.status(400).json({ error: parsed.error.message }); return; }
+  const [portfolio] = await db.update(portfoliosTable)
+    .set({ ...parsed.data, updatedAt: new Date() })
+    .where(eq(portfoliosTable.id, params.data.id)).returning();
+  if (!portfolio) { res.status(404).json({ error: "Portfolio not found" }); return; }
+  res.json(UpdatePortfolioResponse.parse(portfolio));
+});
+
+router.delete("/portfolios/:id", async (req, res): Promise<void> => {
+  const params = DeletePortfolioParams.safeParse(req.params);
+  if (!params.success) { res.status(400).json({ error: params.error.message }); return; }
+  const [portfolio] = await db.delete(portfoliosTable).where(eq(portfoliosTable.id, params.data.id)).returning();
+  if (!portfolio) { res.status(404).json({ error: "Portfolio not found" }); return; }
+  res.sendStatus(204);
+});
+
+export default router;
+import { Router, type IRouter } from "express";
+import { eq, and } from "drizzle-orm";
+import { db, holdingsTable } from "@workspace/db";
+import {
+  CreateHoldingBody, UpdateHoldingBody,
+  ListHoldingsParams, CreateHoldingParams, UpdateHoldingParams, DeleteHoldingParams,
+  ListHoldingsResponse, UpdateHoldingResponse,
+} from "@workspace/api-zod";
+
+const router: IRouter = Router();
+
+router.get("/portfolios/:portfolioId/holdings", async (req, res): Promise<void> => {
+  const params = ListHoldingsParams.safeParse(req.params);
+  if (!params.success) { res.status(400).json({ error: params.error.message }); return; }
+  const holdings = await db.select().from(holdingsTable).where(eq(holdingsTable.portfolioId, params.data.portfolioId));
+  res.json(ListHoldingsResponse.parse(holdings));
+});
+
+router.post("/portfolios/:portfolioId/holdings", async (req, res): Promise<void> => {
+  const params = CreateHoldingParams.safeParse(req.params);
+  if (!params.success) { res.status(400).json({ error: params.error.message }); return; }
+  const parsed = CreateHoldingBody.safeParse(req.body);
+  if (!parsed.success) { res.status(400).json({ error: parsed.error.message }); return; }
+  const [holding] = await db.insert(holdingsTable).values({ ...parsed.data, portfolioId: params.data.portfolioId }).returning();
+  res.status(201).json(holding);
+});
+
+router.patch("/portfolios/:portfolioId/holdings/:id", async (req, res): Promise<void> => {
+  const params = UpdateHoldingParams.safeParse(req.params);
+  if (!params.success) { res.status(400).json({ error: params.error.message }); return; }
+  const parsed = UpdateHoldingBody.safeParse(req.body);
+  if (!parsed.success) { res.status(400).json({ error: parsed.error.message }); return; }
+  const [holding] = await db.update(holdingsTable)
+    .set({ ...parsed.data, updatedAt: new Date() })
+    .where(and(eq(holdingsTable.id, params.data.id), eq(holdingsTable.portfolioId, params.data.portfolioId)))
+    .returning();
+  if (!holding) { res.status(404).json({ error: "Holding not found" }); return; }
+  res.json(UpdateHoldingResponse.parse(holding));
+});
+
+router.delete("/portfolios/:portfolioId/holdings/:id", async (req, res): Promise<void> => {
+  const params = DeleteHoldingParams.safeParse(req.params);
+  if (!params.success) { res.status(400).json({ error: params.error.message }); return; }
+  const [holding] = await db.delete(holdingsTable)
+    .where(and(eq(holdingsTable.id, params.data.id), eq(holdingsTable.portfolioId, params.data.portfolioId)))
+    .returning();
+  if (!holding) { res.status(404).json({ error: "Holding not found" }); return; }
+  res.sendStatus(204);
+});
+
+export default router;
+import { Router, type IRouter } from "express";
+import { eq, and } from "drizzle-orm";
+import { db, targetsTable } from "@workspace/db";
+import {
+  CreateTargetBody, UpdateTargetBody,
+  ListTargetsParams, CreateTargetParams, UpdateTargetParams, DeleteTargetParams,
+  ListTargetsResponse, UpdateTargetResponse,
+} from "@workspace/api-zod";
+
+const router: IRouter = Router();
+
+router.get("/portfolios/:portfolioId/targets", async (req, res): Promise<void> => {
+  const params = ListTargetsParams.safeParse(req.params);
+  if (!params.success) { res.status(400).json({ error: params.error.message }); return; }
+  const targets = await db.select().from(targetsTable).where(eq(targetsTable.portfolioId, params.data.portfolioId));
+  res.json(ListTargetsResponse.parse(targets));
+});
+
+router.post("/portfolios/:portfolioId/targets", async (req, res): Promise<void> => {
+  const params = CreateTargetParams.safeParse(req.params);
+  if (!params.success) { res.status(400).json({ error: params.error.message }); return; }
+  const parsed = CreateTargetBody.safeParse(req.body);
+  if (!parsed.success) { res.status(400).json({ error: parsed.error.message }); return; }
+  const [target] = await db.insert(targetsTable).values({ ...parsed.data, portfolioId: params.data.portfolioId }).returning();
+  res.status(201).json(target);
+});
+
+router.patch("/portfolios/:portfolioId/targets/:id", async (req, res): Promise<void> => {
+  const params = UpdateTargetParams.safeParse(req.params);
+  if (!params.success) { res.status(400).json({ error: params.error.message }); return; }
+  const parsed = UpdateTargetBody.safeParse(req.body);
+  if (!parsed.success) { res.status(400).json({ error: parsed.error.message }); return; }
+  const [target] = await db.update(targetsTable)
+    .set({ ...parsed.data, updatedAt: new Date() })
+    .where(and(eq(targetsTable.id, params.data.id), eq(targetsTable.portfolioId, params.data.portfolioId)))
+    .returning();
+  if (!target) { res.status(404).json({ error: "Target not found" }); return; }
+  res.json(UpdateTargetResponse.parse(target));
+});
+
+router.delete("/portfolios/:portfolioId/targets/:id", async (req, res): Promise<void> => {
+  const params = DeleteTargetParams.safeParse(req.params);
+  if (!params.success) { res.status(400).json({ error: params.error.message }); return; }
+  const [target] = await db.delete(targetsTable)
+    .where(and(eq(targetsTable.id, params.data.id), eq(targetsTable.portfolioId, params.data.portfolioId)))
+    .returning();
+  if (!target) { res.status(404).json({ error: "Target not found" }); return; }
+  res.sendStatus(204);
+});
+
+export default router;
+import { Router, type IRouter } from "express";
+import { eq } from "drizzle-orm";
+import { db, holdingsTable, targetsTable } from "@workspace/db";
+import {
+  GetRebalancePlanParams, GetPortfolioSummaryParams,
+  GetRebalancePlanResponse, GetPortfolioSummaryResponse,
+} from "@workspace/api-zod";
+
+const router: IRouter = Router();
+
+router.get("/portfolios/:portfolioId/rebalance", async (req, res): Promise<void> => {
+  const params = GetRebalancePlanParams.safeParse(req.params);
+  if (!params.success) { res.status(400).json({ error: params.error.message }); return; }
+
+  const { portfolioId } = params.data;
+  const holdings = await db.select().from(holdingsTable).where(eq(holdingsTable.portfolioId, portfolioId));
+  const targets = await db.select().from(targetsTable).where(eq(targetsTable.portfolioId, portfolioId));
+
+  const totalValue = holdings.reduce((sum, h) => sum + h.shares * h.currentPrice, 0);
+  if (totalValue === 0) {
+    res.json(GetRebalancePlanResponse.parse({ totalValue: 0, actions: [], summary: { totalBuys: 0, totalSells: 0, actionsCount: 0 } }));
+    return;
+  }
+
+  const targetMap = new Map(targets.map((t) => [t.assetClass, t.targetPercent]));
+
+  const actions = holdings.map((holding) => {
+    const currentValue = holding.shares * holding.currentPrice;
+    const currentPercent = (currentValue / totalValue) * 100;
+    const targetPercent = targetMap.get(holding.assetClass) ?? 0;
+    const targetValue = (targetPercent / 100) * totalValue;
+    const difference = targetValue - currentValue;
+    const sharesToTrade = Math.abs(difference / holding.currentPrice);
+    let action = "HOLD";
+    if (difference > 1) action = "BUY";
+    else if (difference < -1) action = "SELL";
+    return { ticker: holding.ticker, name: holding.name, assetClass: holding.assetClass, action, currentValue, targetValue, difference, sharesToTrade, currentPercent, targetPercent };
+  });
+
+  const totalBuys = actions.filter((a) => a.action === "BUY").reduce((sum, a) => sum + a.difference, 0);
+  const totalSells = Math.abs(actions.filter((a) => a.action === "SELL").reduce((sum, a) => sum + a.difference, 0));
+  const actionsCount = actions.filter((a) => a.action !== "HOLD").length;
+
+  res.json(GetRebalancePlanResponse.parse({ totalValue, actions, summary: { totalBuys, totalSells, actionsCount } }));
+});
+
+router.get("/portfolios/:portfolioId/summary", async (req, res): Promise<void> => {
+  const params = GetPortfolioSummaryParams.safeParse(req.params);
+  if (!params.success) { res.status(400).json({ error: params.error.message }); return; }
+
+  const { portfolioId } = params.data;
+  const holdings = await db.select().from(holdingsTable).where(eq(holdingsTable.portfolioId, portfolioId));
+  const targets = await db.select().from(targetsTable).where(eq(targetsTable.portfolioId, portfolioId));
+
+  const totalValue = holdings.reduce((sum, h) => sum + h.shares * h.currentPrice, 0);
+  const targetMap = new Map(targets.map((t) => [t.assetClass, t.targetPercent]));
+  const assetClassMap = new Map<string, number>();
+  for (const h of holdings) {
+    const val = h.shares * h.currentPrice;
+    assetClassMap.set(h.assetClass, (assetClassMap.get(h.assetClass) ?? 0) + val);
+  }
+  const allocations = Array.from(assetClassMap.entries()).map(([assetClass, currentValue]) => {
+    const currentPercent = totalValue > 0 ? (currentValue / totalValue) * 100 : 0;
+    const targetPercent = targetMap.get(assetClass) ?? 0;
+    const drift = currentPercent - targetPercent;
+    return { assetClass, currentValue, currentPercent, targetPercent, drift };
+  });
+  const maxDrift = allocations.reduce((max, a) => Math.max(max, Math.abs(a.drift)), 0);
+  const isBalanced = maxDrift < 5;
+
+  res.json(GetPortfolioSummaryResponse.parse({ portfolioId, totalValue, holdingsCount: holdings.length, allocations, isBalanced, maxDrift }));
+});
+
+export default router;
+import { Router, type IRouter } from "express";
+import healthRouter from "./health";
+import portfoliosRouter from "./portfolios";
+import holdingsRouter from "./holdings";
+import targetsRouter from "./targets";
+import analyticsRouter from "./analytics";
+
+const router: IRouter = Router();
+router.use(healthRouter);
+router.use(portfoliosRouter);
+router.use(holdingsRouter);
+router.use(targetsRouter);
+router.use(analyticsRouter);
+
+export default router;
+import { Switch, Route, Router as WouterRouter } from "wouter";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Toaster } from "@/components/ui/toaster";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import Layout from "@/components/Layout";
+import Dashboard from "@/pages/Dashboard";
+import NewPortfolio from "@/pages/NewPortfolio";
+import PortfolioDetail from "@/pages/PortfolioDetail";
+import Holdings from "@/pages/Holdings";
+import Targets from "@/pages/Targets";
+import Rebalance from "@/pages/Rebalance";
+import NotFound from "@/pages/not-found";
+
+const queryClient = new QueryClient({ defaultOptions: { queries: { retry: 1, staleTime: 30000 } } });
+
+function Router() {
+  return (
+    <Layout>
+      <Switch>
+        <Route path="/" component={Dashboard} />
+        <Route path="/portfolios/new" component={NewPortfolio} />
+        <Route path="/portfolios/:id" component={PortfolioDetail} />
+        <Route path="/portfolios/:id/holdings" component={Holdings} />
+        <Route path="/portfolios/:id/targets" component={Targets} />
+        <Route path="/portfolios/:id/rebalance" component={Rebalance} />
+        <Route component={NotFound} />
+      </Switch>
+    </Layout>
+  );
+}
+
+export default function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
+          <Router />
+        </WouterRouter>
+        <Toaster />
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
+}
+import { Link, useLocation } from "wouter";
+import { cn } from "@/lib/utils";
+import { Home, BarChart3, TrendingUp } from "lucide-react";
+
+const navItems = [
+  { href: "/", label: "Portfolios", icon: Home },
+  { href: "/about", label: "About", icon: BarChart3 },
+];
+
+export default function Layout({ children }: { children: React.ReactNode }) {
+  const [location] = useLocation();
+  return (
+    <div className="min-h-screen bg-background flex flex-col">
+      <header className="border-b border-border bg-sidebar sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-14">
+            <Link href="/" className="flex items-center gap-2.5">
+              <div className="w-7 h-7 rounded bg-primary/20 border border-primary/30 flex items-center justify-center">
+                <TrendingUp className="w-4 h-4 text-primary" />
+              </div>
+              <span className="font-semibold text-foreground text-sm">Portfolio Rebalancer</span>
+            </Link>
+            <nav className="flex items-center gap-1">
+              {navItems.map(({ href, label, icon: Icon }) => (
+                <Link
+                  key={href}
+                  href={href}
+                  className={cn(
+                    "flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-medium transition-colors",
+                    location === href
+                      ? "bg-primary/15 text-primary"
+                      : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                  )}
+                >
+                  <Icon className="w-3.5 h-3.5" />
+                  {label}
+                </Link>
+              ))}
+            </nav>
+          </div>
+        </div>
+      </header>
+      <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6">
+        {children}
+      </main>
+    </div>
+  );
+}
+export function formatCurrency(value: number, currency = "USD"): string {
+  return new Intl.NumberFormat("en-US", { style: "currency", currency, minimumFractionDigits: 2 }).format(value);
+}
+
+export function formatPercent(value: number, decimals = 1): string {
+  return `${value >= 0 ? "+" : ""}${value.toFixed(decimals)}%`;
+}
+
+export function formatNumber(value: number, decimals = 2): string {
+  return new Intl.NumberFormat("en-US", { minimumFractionDigits: decimals, maximumFractionDigits: decimals }).format(value);
+}
+import { Link } from "wouter";
+import { useListPortfolios, useDeletePortfolio, getListPortfoliosQueryKey } from "@workspace/api-client-react";
+import { useQueryClient } from "@tanstack/react-query";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Plus, TrendingUp, Trash2, ChevronRight } from "lucide-react";
+
+export default function Dashboard() {
+  const { data: portfolios, isLoading } = useListPortfolios();
+  const deletePortfolio = useDeletePortfolio();
+  const queryClient = useQueryClient();
+
+  const handleDelete = async (id: number) => {
+    if (!confirm("Delete this portfolio and all its data?")) return;
+    await deletePortfolio.mutateAsync({ id });
+    queryClient.invalidateQueries({ queryKey: getListPortfoliosQueryKey() });
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-xl font-semibold text-foreground">Portfolios</h1>
+          <p className="text-sm text-muted-foreground mt-0.5">Manage and rebalance your investment portfolios</p>
+        </div>
+        <Button asChild size="sm">
+          <Link href="/portfolios/new"><Plus className="w-3.5 h-3.5 mr-1.5" />New Portfolio</Link>
+        </Button>
+      </div>
+
+      {isLoading ? (
+        <div className="space-y-3">{[1,2,3].map(i => <Skeleton key={i} className="h-20 w-full rounded-lg" />)}</div>
+      ) : !portfolios?.length ? (
+        <div className="flex flex-col items-center justify-center py-20 border border-dashed border-border rounded-lg">
+          <TrendingUp className="w-10 h-10 text-muted-foreground mb-3 opacity-50" />
+          <h3 className="text-sm font-medium">No portfolios yet</h3>
+          <Button asChild size="sm" className="mt-4">
+            <Link href="/portfolios/new"><Plus className="w-3.5 h-3.5 mr-1.5" />Create Portfolio</Link>
+          </Button>
+        </div>
+      ) : (
+        <div className="space-y-2">
+          {portfolios.map((p) => (
+            <div key={p.id} className="group relative flex items-center gap-4 p-4 bg-card border border-card-border rounded-lg hover:border-border transition-all">
+              <div className="w-9 h-9 rounded-md bg-primary/10 border border-primary/20 flex items-center justify-center">
+                <TrendingUp className="w-4 h-4 text-primary" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2">
+                  <span className="font-medium text-sm truncate">{p.name}</span>
+                  <Badge variant="outline" className="text-xs font-mono">{p.currency}</Badge>
+                </div>
+                {p.description && <p className="text-xs text-muted-foreground mt-0.5 truncate">{p.description}</p>}
+              </div>
+              <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:text-destructive"
+                  onClick={(e) => { e.preventDefault(); handleDelete(p.id); }}>
+                  <Trash2 className="w-3.5 h-3.5" />
+                </Button>
+                <Button variant="ghost" size="icon" className="h-7 w-7" asChild>
+                  <Link href={`/portfolios/${p.id}`}><ChevronRight className="w-3.5 h-3.5" /></Link>
+                </Button>
+              </div>
+              <Link href={`/portfolios/${p.id}`} className="absolute inset-0" />
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+import { useState } from "react";
+import { useLocation, Link } from "wouter";
+import { useCreatePortfolio, getListPortfoliosQueryKey } from "@workspace/api-client-react";
+import { useQueryClient } from "@tanstack/react-query";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ArrowLeft } from "lucide-react";
+
+const CURRENCIES = ["USD","EUR","GBP","JPY","CAD","AUD","CHF","INR"];
+
+export default function NewPortfolio() {
+  const [, navigate] = useLocation();
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [currency, setCurrency] = useState("USD");
+  const createPortfolio = useCreatePortfolio();
+  const queryClient = useQueryClient();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const portfolio = await createPortfolio.mutateAsync({ data: { name: name.trim(), description: description.trim() || null, currency } });
+    queryClient.invalidateQueries({ queryKey: getListPortfoliosQueryKey() });
+    navigate(`/portfolios/${portfolio.id}`);
+  };
+
+  return (
+    <div className="max-w-lg mx-auto space-y-6">
+      <div className="flex items-center gap-3">
+        <Button variant="ghost" size="icon" className="h-8 w-8" asChild>
+          <Link href="/"><ArrowLeft className="w-4 h-4" /></Link>
+        </Button>
+        <h1 className="text-lg font-semibold">New Portfolio</h1>
+      </div>
+      <form onSubmit={handleSubmit} className="space-y-4 bg-card border border-card-border rounded-lg p-5">
+        <div className="space-y-1.5">
+          <Label htmlFor="name" className="text-xs">Portfolio Name</Label>
+          <Input id="name" value={name} onChange={e => setName(e.target.value)} placeholder="e.g. My Retirement Fund" className="h-9 text-sm" required />
+        </div>
+        <div className="space-y-1.5">
+          <Label htmlFor="desc" className="text-xs">Description <span className="text-muted-foreground">(optional)</span></Label>
+          <Textarea id="desc" value={description} onChange={e => setDescription(e.target.value)} className="text-sm min-h-[70px] resize-none" />
+        </div>
+        <div className="space-y-1.5">
+          <Label className="text-xs">Currency</Label>
+          <Select value={currency} onValueChange={setCurrency}>
+            <SelectTrigger className="h-9 text-sm"><SelectValue /></SelectTrigger>
+            <SelectContent>{CURRENCIES.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
+          </Select>
+        </div>
+        <div className="flex gap-2 pt-1">
+          <Button type="submit" size="sm" disabled={createPortfolio.isPending || !name.trim()} className="flex-1">
+            {createPortfolio.isPending ? "Creating..." : "Create Portfolio"}
+          </Button>
+          <Button type="button" variant="outline" size="sm" asChild><Link href="/">Cancel</Link></Button>
+        </div>
+      </form>
+    </div>
+  );
+}
